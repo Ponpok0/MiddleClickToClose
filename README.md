@@ -8,7 +8,9 @@ A tiny Windows tray utility that closes a window when you middle-click its taskb
 2. Run `MiddleClickToClose.exe`. An icon appears in the system tray.
 3. Middle-click a taskbar button to close that window (the app sends `WM_CLOSE` to it).
 
-To quit, right-click the tray icon and choose the only menu item (`終了`, "Exit").
+To quit, right-click the tray icon and choose **Exit**.
+
+The UI follows the Windows display language (English and Japanese are supported; other languages fall back to English).
 
 To start it automatically at sign-in, put a shortcut to the exe in `shell:startup`.
 
@@ -22,7 +24,7 @@ To start it automatically at sign-in, put a shortcut to the exe in `shell:startu
 Requires the .NET 8 SDK.
 
 ```
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
 ## License
