@@ -22,7 +22,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         _notifyIcon = new NotifyIcon
         {
             Icon = _trayIcon,
-            Text = "MiddleClickToClose - タスクバーのミドルクリックでウィンドウを閉じる",
+            Text = Strings.TrayTooltip,
             Visible = true,
             ContextMenuStrip = CreateContextMenu(),
         };
@@ -41,14 +41,14 @@ internal sealed class TrayApplicationContext : ApplicationContext
     private static Icon LoadTrayIcon()
     {
         using var stream = typeof(TrayApplicationContext).Assembly.GetManifestResourceStream(TrayIconResourceName)
-            ?? throw new InvalidOperationException($"埋め込みリソース {TrayIconResourceName} が見つかりません。");
+            ?? throw new InvalidOperationException(Strings.EmbeddedResourceNotFound(TrayIconResourceName));
         return new Icon(stream, SystemInformation.SmallIconSize);
     }
 
     private ContextMenuStrip CreateContextMenu()
     {
         var menu = new ContextMenuStrip();
-        menu.Items.Add("終了(&X)", null, (_, _) => ExitThread());
+        menu.Items.Add(Strings.ExitMenu, null, (_, _) => ExitThread());
         return menu;
     }
 
