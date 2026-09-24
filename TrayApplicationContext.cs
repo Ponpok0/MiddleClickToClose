@@ -9,15 +9,19 @@ namespace MiddleClickToClose;
 /// </summary>
 internal sealed class TrayApplicationContext : ApplicationContext
 {
+    private const string TrayIconResourceName = "MiddleClickToClose.app.ico";
+
+    private readonly Icon _trayIcon;
     private readonly NotifyIcon _notifyIcon;
     private readonly LowLevelMouseHook _mouseHook;
     private bool _disposed;
 
     internal TrayApplicationContext()
     {
+        _trayIcon = LoadTrayIcon();
         _notifyIcon = new NotifyIcon
         {
-            Icon = SystemIcons.Application,
+            Icon = _trayIcon,
             Text = "MiddleClickToClose - タスクバーのミドルクリックでウィンドウを閉じる",
             Visible = true,
             ContextMenuStrip = CreateContextMenu(),
@@ -26,6 +30,19 @@ internal sealed class TrayApplicationContext : ApplicationContext
         _mouseHook = new LowLevelMouseHook();
         _mouseHook.MiddleClickOnTaskbar += OnMiddleClickOnTaskbar;
         _mouseHook.Install();
+    }
+
+    /// <summary>
+    /// 埋め込みリソースから、トレイの表示サイズに合う画像を選んでアイコンを読み込む。
+    /// </summary>
+    /// <remarks>
+    /// Icon.ExtractAssociatedIcon は 32px の画像しか返さず、トレイでは縮小されてぼやけるため使わない。
+    /// </remarks>
+    private static Icon LoadTrayIcon()
+    {
+        using var stream = typeof(TrayApplicationContext).Assembly.GetManifestResourceStream(TrayIconResourceName)
+            ?? throw new InvalidOperationException($"埋め込みリソース {TrayIconResourceName} が見つかりません。");
+        return new Icon(stream, SystemInformation.SmallIconSize);
     }
 
     private ContextMenuStrip CreateContextMenu()
@@ -50,6 +67,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
                 _mouseHook.Dispose();
                 _notifyIcon.Visible = false;
                 _notifyIcon.Dispose();
+                _trayIcon.Dispose();
             }
             _disposed = true;
         }
