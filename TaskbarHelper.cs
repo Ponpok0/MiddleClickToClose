@@ -77,31 +77,28 @@ internal static class TaskbarHelper
     // ==============================================================================
 
     /// <summary>
-    /// 指定座標がタスクバー上かどうかを判定する。
-    /// メインタスクバーとセカンダリタスクバー（マルチモニター）の両方をチェックする。
+    /// 指定座標で最前面に見えているのがタスクバーかどうかを判定する。
+    /// メインタスクバーとセカンダリタスクバー（マルチモニター）の両方を対象とする。
     /// </summary>
+    /// <remarks>
+    /// タスクバーの矩形だけで判定すると、全画面のウィンドウ（リモート デスクトップ接続、動画等）の
+    /// 下に隠れたタスクバーの位置でもミドルクリックを奪ってしまう。
+    /// リモート デスクトップの接続元でも本ツールが動いている場合、接続先へ届くはずのクリックが
+    /// 接続元で握り潰され、接続先のタスクバーで機能しなくなる。
+    /// </remarks>
     internal static bool IsPointOnTaskbar(NativeMethods.POINT pt)
     {
-        // メインタスクバー
-        var taskbar = NativeMethods.FindWindow("Shell_TrayWnd", null);
-        if (taskbar != IntPtr.Zero && IsPointInWindow(taskbar, pt))
-            return true;
+        var hwnd = NativeMethods.WindowFromPoint(pt);
+        if (hwnd == IntPtr.Zero) return false;
 
-        // セカンダリタスクバー（マルチモニター環境）
-        var secondary = IntPtr.Zero;
-        while (true)
-        {
-            secondary = NativeMethods.FindWindowEx(IntPtr.Zero, secondary, "Shell_SecondaryTrayWnd", null);
-            if (secondary == IntPtr.Zero) break;
-            if (IsPointInWindow(secondary, pt)) return true;
-        }
+        // タスクバー上の要素は Shell_TrayWnd 配下の子ウィンドウとして返るため、ルートで判定する
+        var root = NativeMethods.GetAncestor(hwnd, NativeMethods.GA_ROOT);
+        if (root == IntPtr.Zero) return false;
 
-        return false;
-    }
-
-    private static bool IsPointInWindow(IntPtr hwnd, NativeMethods.POINT pt)
-    {
-        return NativeMethods.GetWindowRect(hwnd, out var rect) && rect.Contains(pt);
+        var sb = new StringBuilder(64);
+        NativeMethods.GetClassName(root, sb, sb.Capacity);
+        var className = sb.ToString();
+        return className is "Shell_TrayWnd" or "Shell_SecondaryTrayWnd";
     }
 
     // ==============================================================================
