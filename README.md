@@ -30,5 +30,3 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 ## License
 
 [MIT](LICENSE)
-
-The icon is a modified version of the Google Material Icons `mouse` icon, licensed under the Apache License 2.0. See [Resources/README.md](Resources/README.md) for details.

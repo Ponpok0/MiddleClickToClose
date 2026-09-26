@@ -4,10 +4,8 @@
 
 EXE とシステムトレイのアイコン。
 
-- 元の画像: Google Material Icons の `mouse` (Outlined, 48dp 2x PNG)
-  - https://github.com/google/material-design-icons/blob/master/png/hardware/mouse/materialiconsoutlined/48dp/2x/outline_mouse_black_48dp.png
-- ライセンス: Apache License 2.0 (`LICENSE-MaterialIcons.txt`)
-- 改変内容:
-  - 暗いタスクバーでも見えるよう、線画に白い縁取りを追加した
-  - 右下に閉じる操作を表す赤丸と白い × を重ねた
-  - 16 / 20 / 24 / 32 / 40 / 48 / 64 / 96 px を 1 つの .ico にまとめた
+- 図形の組み合わせで描いたオリジナルのマウスの絵（外部素材は使っていない）
+- ホイールだけを青（Windows 既定のアクセントカラー #0078D4）で塗り、ミドルクリックを表す
+  - 赤は無効化や録画中などの状態表示と紛らわしいため使わない
+- 本体を白で塗り、暗いタスクバーでも明るいタスクバーでも輪郭が見えるようにした
+- 16 / 20 / 24 / 32 / 40 / 48 / 64 / 96 / 256 px をサイズごとに描き、1 つの .ico にまとめた
